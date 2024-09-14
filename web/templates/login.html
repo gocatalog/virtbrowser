@@ -1,21 +1,35 @@
-<!-- login.html -->
-<div class="row justify-content-center">
-    <div class="col-md-6">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtbrowser {{ .Title }}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script src="https://unpkg.com/htmx.org@1.5.0"></script>
+</head>
+<body class="login">
+    <div class="login-container shadow-lg">
         <h2>Login</h2>
         {{ if .Error }}
         <div class="alert alert-danger">{{ .Error }}</div>
         {{ end }}
-        <form hx-post="/login" hx-target="#content" hx-swap="innerHTML">
-            <div class="form-group">
-                <label for="username">Username</label>
+        <h3 class="login-header">Ubuntu 20.04.6 LTS</h3>
+        <form method="POST" action="/login">
+            <div class="form-group mb-3">
+                <label for="username">User name</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+
+            <button type="submit" class="btn btn-primary w-100">Log In</button>
+            <div class="text-center mt-3">
+                <small>Server: </small>
+            </div>
         </form>
     </div>
-</div>
-
+</body>
+</html>

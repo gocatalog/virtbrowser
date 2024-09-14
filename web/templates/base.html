@@ -4,20 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Title }}</title>
+    <title>Virtbrowser {{ .Title }}</title>
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="stylesheet" href="/static/css/sidebars.css">
     <script src="https://unpkg.com/htmx.org@1.5.0"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">VirtBrowser</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+<!-- Sidebar -->
+<nav class="col-md-2 d-md-block sidebar">
+    <div class="position-sticky">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+              <svg class="bi pe-none me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+              <span class="fs-4">VirtBrowser</span>
+            </a>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                  <strong>Hello {{ .User }}</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                  <li><a class="dropdown-item" href="#">Settings</a></li>
+                  <li><a class="dropdown-item" href="#">Profile</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+                </ul>
+              </div>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+              <li class="nav-item"><a href="#" class="nav-link" aria-current="page">Overview</a></li>
+              <li class="nav-item"><a href="#" class="nav-link" aria-current="page">Virtual machine</a></li>
+              <li class="nav-item"><a href="#" class="nav-link" aria-current="page">Terminal</a></li>
             </ul>
-        </div>
-    </nav>
-    <div class="container mt-5" id="content" hx-get="/login" hx-trigger="load"></div>
+            <hr>
+
+          </div>
+    </div>
+</nav>
+
+<script src="/static/js/sidebars.js"></script>
 </body>
 </html>

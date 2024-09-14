@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RedirectToDashboardOrLogin ...
 func RedirectToDashboardOrLogin(c *gin.Context) {
 	session := sessions.Default(c)
 	user := session.Get("user")
@@ -22,6 +23,7 @@ func RedirectToDashboardOrLogin(c *gin.Context) {
 	}
 }
 
+// ShowLoginPage ...
 func ShowLoginPage(c *gin.Context) {
 	session := sessions.Default(c)
 	user := session.Get("user")
@@ -30,41 +32,28 @@ func ShowLoginPage(c *gin.Context) {
 		return
 	}
 
-	if c.GetHeader("HX-Request") != "" {
-		c.HTML(http.StatusOK, "login.html", gin.H{
-			"Title": "Login",
-			"Error": c.Query("error"),
-		})
-	} else {
-		c.HTML(http.StatusOK, "base.html", gin.H{
-			"Title": "Login",
-			"Error": c.Query("error"),
-		})
-	}
+	c.HTML(http.StatusOK, "login.html", gin.H{
+		"Title": "Login",
+		"Error": c.Query("error"),
+	})
 }
 
+// PerformLogin ...
 func PerformLogin(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
 	err := auth.Authenticate(username, password)
 	if err != nil {
-		if c.GetHeader("HX-Request") != "" {
-			c.HTML(http.StatusOK, "login.html", gin.H{
-				"Title": "Login",
-				"Error": "Authentication failed",
-			})
-		} else {
-			c.Redirect(http.StatusFound, "/login?error=Authentication failed")
-		}
+		c.Redirect(http.StatusFound, "/login?error=Authentication failed")
 		return
 	}
 
 	session := sessions.Default(c)
 	session.Set("user", username)
 	session.Save()
-	c.Redirect(http.StatusFound, "/dashboard")
 
+	c.Redirect(http.StatusFound, "/dashboard")
 }
 
 func ShowDashboard(c *gin.Context) {
@@ -74,18 +63,10 @@ func ShowDashboard(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/login")
 		return
 	}
-
-	if c.GetHeader("HX-Request") != "" {
-		c.HTML(http.StatusOK, "dashboard.html", gin.H{
-			"Title": "Dashboard",
-			"User":  user,
-		})
-	} else {
-		c.HTML(http.StatusOK, "base.html", gin.H{
-			"Title": "Dashboard",
-			"User":  user,
-		})
-	}
+	c.HTML(http.StatusOK, "base.html", gin.H{
+		"Title": "Dashboard",
+		"User":  user,
+	})
 }
 
 func PerformLogout(c *gin.Context) {
