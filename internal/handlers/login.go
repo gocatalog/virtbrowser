@@ -56,17 +56,9 @@ func PerformLogin(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/dashboard")
 }
 
+// ShowDashboard ...
 func ShowDashboard(c *gin.Context) {
-	session := sessions.Default(c)
-	user := session.Get("user")
-	if user == nil {
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-	c.HTML(http.StatusOK, "base.html", gin.H{
-		"Title": "Dashboard",
-		"User":  user,
-	})
+	renderPartial(c, "dashboard.html", "Dashboard")
 }
 
 func PerformLogout(c *gin.Context) {

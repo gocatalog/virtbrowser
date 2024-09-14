@@ -33,6 +33,8 @@ func main() {
 	router.GET("/logout", handlers.PerformLogout)
 	router.POST("/login", handlers.PerformLogin)
 	router.GET("/dashboard", handlers.ShowDashboard)
+	router.GET("/vm", handlers.ShowVMList)
+	router.GET("/terminal", handlers.ShowTerminal)
 
 	router.Use(handlers.RedirectToDashboardOrLogin)
 

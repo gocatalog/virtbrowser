@@ -1,5 +1,44 @@
+<div class="container mt-3">
+    <h4>Welcome, {{ .User }} Dashboard Page</h4>
 
-<div class="container">
-    <h2>Welcome, {{ .User }}</h2>
-    <p>This is the dashboard.</p>
+    <div class="row">
+        <!-- Health Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Health</h5>
+                    <p class="card-text text-danger">5 services have failed</p>
+                    <p class="card-text text-warning">Security updates available</p>
+                    <p class="card-text">Last successful login: Sep 13, 04:32 PM</p>
+                    <a href="#" class="card-link">View login history</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Usage</h5>
+                    <p>CPU: 0% of 36 CPUs</p>
+                    <p>Memory: 4.1 / 125.5 GiB</p>
+                    <a href="#" class="card-link">View details and history</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Info Card -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">System Information</h5>
+                    <p>Model: Dell Precision 5820 Tower</p>
+                    <p>Machine ID: 363c...</p>
+                    <p>Uptime: about 7 hours</p>
+                    <a href="#" class="card-link">View hardware details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
