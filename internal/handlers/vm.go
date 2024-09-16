@@ -12,4 +12,5 @@ func ShowVMList(c *gin.Context) {
 // ShowTerminal ...
 func ShowTerminal(c *gin.Context) {
 	renderPartial(c, "term.html", "Terminal")
+	// c.HTML(http.StatusOK, "term_.html", nil)
 }

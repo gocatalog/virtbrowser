@@ -33,8 +33,16 @@ func main() {
 	router.GET("/logout", handlers.PerformLogout)
 	router.POST("/login", handlers.PerformLogin)
 	router.GET("/dashboard", handlers.ShowDashboard)
-	router.GET("/vm", handlers.ShowVMList)
+
 	router.GET("/terminal", handlers.ShowTerminal)
+	router.GET("/ssh", handlers.HandleTerm)
+
+	// group routes for vms
+	routeGrpVms := router.Group("/vms")
+	routeGrpVms.GET("", handlers.ShowVMList)
+	// routeGrpVms.POST("", CreateVM)
+	// routeGrpVms.PUT("/:id", UpdateVM)
+	// routeGrpVms.DELETE("/:id", DeleteVM)
 
 	router.Use(handlers.RedirectToDashboardOrLogin)
 
