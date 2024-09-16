@@ -10,18 +10,23 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var tmpl *template.Template
 
 func main() {
 
-	// Set up logging to file and console
 	// # TODO: update to config
-	logFile, err := os.OpenFile("virtbrowser.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("Failed to open log file: %v", err)
+	// Set up logging to file and console with rotation
+	logFile := &lumberjack.Logger{
+		Filename:   "virtbrowser.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     2,    // days
+		Compress:   true, // disabled by default
 	}
+
 	gin.DefaultWriter = io.MultiWriter(logFile, os.Stdout)
 	log.SetOutput(gin.DefaultWriter)
 
@@ -30,6 +35,7 @@ func main() {
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("mysession", store))
 
+	var err error
 	tmpl, err = template.ParseGlob("web/templates/*.html")
 	if err != nil {
 		log.Fatalf("Error parsing templates: %v", err)
