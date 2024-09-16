@@ -8,10 +8,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/matishsiao/goInfo"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/mem"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -38,11 +44,14 @@ func renderPartial(c *gin.Context, partial string, title string) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, gin.H{"User": user}); err != nil {
+	if err := tmpl.Execute(&buf, gin.H{"User": user, "Sys": getSystemUsage()}); err != nil {
 		c.String(http.StatusInternalServerError, "Error executing template: %v", err)
 		return
 	}
-	c.HTML(http.StatusOK, "base.html", gin.H{"Title": title, "User": user, "Content": template.HTML(buf.String())})
+	data := gin.H{
+		"Title": title, "User": user, "Content": template.HTML(buf.String()),
+	}
+	c.HTML(http.StatusOK, "base.html", data)
 }
 
 // HandleTerm ...
@@ -176,5 +185,33 @@ func handleSSHSession(wsConn *websocket.Conn, sshConn *ssh.Client) error {
 				return err
 			}
 		}
+	}
+}
+
+// Function to get system usage
+func getSystemUsage() map[string]interface{} {
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+
+	vMem, _ := mem.VirtualMemory()
+	cpuPercent, _ := cpu.Percent(time.Second, false)
+	hostInfo, _ := host.Info()
+	gi, _ := goInfo.GetInfo()
+
+	return map[string]interface{}{
+		"Alloc":      fmt.Sprintf("%.3f", float64(memStats.Alloc)/(1024*1024)),
+		"TotalAlloc": fmt.Sprintf("%.3f", float64(memStats.TotalAlloc)/(1024*1024)),
+		"Sys":        fmt.Sprintf("%.3f", float64(memStats.Sys)/(1024*1024)),
+		"NumGC":      memStats.NumGC,
+		"CPU":        fmt.Sprintf("%.3f", cpuPercent[0]),
+		"TotalCPU":   runtime.NumCPU(),
+		"UsedMem":    fmt.Sprintf("%.3f", float64(vMem.Used)/(1024*1024*1024)),
+		"TotalMem":   fmt.Sprintf("%.3f", float64(vMem.Total)/(1024*1024*1024)),
+		"OS":         gi.OS,
+		"Kernel":     gi.Kernel,
+		"Platform":   gi.Platform,
+		"Hostname":   gi.Hostname,
+		"MachineID":  hostInfo.HostID,
+		"Uptime":     fmt.Sprintf("%.2f hours", float64(hostInfo.Uptime)/3600),
 	}
 }

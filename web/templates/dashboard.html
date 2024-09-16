@@ -20,9 +20,13 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Usage</h5>
-                    <p>CPU: 0% of 36 CPUs</p>
-                    <p>Memory: 4.1 / 125.5 GiB</p>
-                    <a href="#" class="card-link">View details and history</a>
+                    <p>CPU: {{ .Sys.CPU }}% of {{ .Sys.TotalCPU }} CPUs</p>
+                    <p>Memory: {{ .Sys.UsedMem }} of {{ .Sys.TotalMem }} GiB</p>
+                    <p>Allocated Memory: {{ .Sys.Alloc }} of {{ .Sys.TotalAlloc}}</p>
+                    <p>System Memory: {{ .Sys.Sys }}</p>
+                    <p>Number of Garbage Collections: {{ .Sys.NumGC }}</p>
+
+                    <!-- <a href="#" class="card-link">View details and history</a> -->
                 </div>
             </div>
         </div>
@@ -32,10 +36,13 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">System Information</h5>
-                    <p>Model: Dell Precision 5820 Tower</p>
-                    <p>Machine ID: 363c...</p>
-                    <p>Uptime: about 7 hours</p>
-                    <a href="#" class="card-link">View hardware details</a>
+                    <p>OS: {{ .Sys.OS  }}</p>
+                    <p>Kernel: {{ .Sys.Kernel  }}</p>
+                    <p>Platform: {{ .Sys.Platform  }}</p>
+                    <p>Hostname: {{ .Sys.Hostname  }}</p>
+                    <p>Machine ID: {{ .Sys.MachineID }}</p>
+                    <p>Uptime: {{ .Sys.Uptime  }}</p>
+                    <!-- <a href="#" class="card-link">View hardware details</a> -->
                 </div>
             </div>
         </div>
