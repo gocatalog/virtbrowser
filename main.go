@@ -54,6 +54,8 @@ func main() {
 	// routeGrpVms.PUT("/:id", UpdateVM)
 	// routeGrpVms.DELETE("/:id", DeleteVM)
 
+	router.GET("/logs", handlers.TailLogFile) // Add this line
+
 	router.Use(handlers.RedirectToDashboardOrLogin)
 
 	// Start the server
