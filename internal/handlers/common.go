@@ -21,12 +21,19 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
+var (
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+	logger *log.Logger
+)
+
+func SetLogger(l *log.Logger) {
+	logger = l
 }
 
 func renderPartial(c *gin.Context, partial string, title string) {
@@ -54,30 +61,30 @@ func renderPartial(c *gin.Context, partial string, title string) {
 	c.HTML(http.StatusOK, "base.html", data)
 }
 
-// HandleTerm ...
-func HandleTerm(c *gin.Context) {
+// ShowTerminalWebSocket ...
+func ShowTerminalWebSocket(c *gin.Context) {
 	wsConn, err := upgradeWebSocket(c)
 	if err != nil {
-		log.Println(err)
+		logger.Println(err)
 		return
 	}
 	defer wsConn.Close()
 
 	config, err := createSSHConfig()
 	if err != nil {
-		log.Println(err)
+		logger.Println(err)
 		return
 	}
 
 	sshConn, err := establishSSHConnection(config)
 	if err != nil {
-		log.Println(err)
+		logger.Println(err)
 		return
 	}
 	defer sshConn.Close()
 
 	if err := handleSSHSession(wsConn, sshConn); err != nil {
-		log.Println(err)
+		logger.Println(err)
 	}
 }
 
@@ -156,14 +163,14 @@ func handleSSHSession(wsConn *websocket.Conn, sshConn *ssh.Client) error {
 			n, err := sshOut.Read(buf)
 			if err != nil {
 				if err != io.EOF {
-					log.Println("Read from SSH stdout error:", err)
+					logger.Println("Read from SSH stdout error:", err)
 				}
 				return
 			}
 			if n > 0 {
 				err = wsConn.WriteMessage(websocket.BinaryMessage, buf[:n])
 				if err != nil {
-					log.Println("Write to WebSocket error:", err)
+					logger.Println("Write to WebSocket error:", err)
 					return
 				}
 			}
@@ -174,14 +181,14 @@ func handleSSHSession(wsConn *websocket.Conn, sshConn *ssh.Client) error {
 		messageType, p, err := wsConn.ReadMessage()
 		if err != nil {
 			if err != io.EOF {
-				log.Println("Read from WebSocket error:", err)
+				logger.Println("Read from WebSocket error:", err)
 			}
 			return err
 		}
 		if messageType == websocket.BinaryMessage || messageType == websocket.TextMessage {
 			_, err = sshIn.Write(p)
 			if err != nil {
-				log.Println("Write to SSH stdin error:", err)
+				logger.Println("Write to SSH stdin error:", err)
 				return err
 			}
 		}

@@ -26,3 +26,11 @@ body.login {
     margin-bottom: 20px;
 }
 
+#log {
+    white-space: pre-wrap;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    height: 80vh;
+    overflow-y: scroll;
+}

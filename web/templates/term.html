@@ -11,7 +11,7 @@
     term.writeln('Connecting to SSH server...');
     let currentLocation = window.location.host;
     let prefix = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-    const socket = new WebSocket(prefix + currentLocation + '/ssh');
+    const socket = new WebSocket(prefix + currentLocation + '/ws/terminal');
     socket.binaryType = 'arraybuffer';
 
     socket.onopen = function () {

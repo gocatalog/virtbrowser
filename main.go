@@ -13,7 +13,10 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var tmpl *template.Template
+var (
+	tmpl   *template.Template
+	logger *log.Logger
+)
 
 func main() {
 
@@ -28,7 +31,8 @@ func main() {
 	}
 
 	gin.DefaultWriter = io.MultiWriter(logFile, os.Stdout)
-	log.SetOutput(gin.DefaultWriter)
+	logger = log.New(gin.DefaultWriter, "", log.LstdFlags)
+	handlers.SetLogger(logger)
 
 	router := gin.Default()
 
@@ -38,7 +42,7 @@ func main() {
 	var err error
 	tmpl, err = template.ParseGlob("web/templates/*.html")
 	if err != nil {
-		log.Fatalf("Error parsing templates: %v", err)
+		logger.Fatalf("Error parsing templates: %v", err)
 	}
 
 	router.SetHTMLTemplate(tmpl)
@@ -50,8 +54,10 @@ func main() {
 	router.POST("/login", handlers.PerformLogin)
 	router.GET("/dashboard", handlers.ShowDashboard)
 
-	router.GET("/terminal", handlers.ShowTerminal)
-	router.GET("/ssh", handlers.HandleTerm)
+	router.GET("/terminal", handlers.ShowTerminal)             // Serve the HTML page
+	router.GET("/ws/terminal", handlers.ShowTerminalWebSocket) // Handle WebSocket connections
+	router.GET("/logs", handlers.TailLogFile)                  // Serve the HTML page
+	router.GET("/ws/logs", handlers.TailLogWebSocket)          // Handle WebSocket connections
 
 	// group routes for vms
 	routeGrpVms := router.Group("/vms")
@@ -60,12 +66,10 @@ func main() {
 	// routeGrpVms.PUT("/:id", UpdateVM)
 	// routeGrpVms.DELETE("/:id", DeleteVM)
 
-	router.GET("/logs", handlers.TailLogFile) // Add this line
-
 	router.Use(handlers.RedirectToDashboardOrLogin)
 
 	// Start the server
 	if err := router.Run(":8080"); err != nil {
-		log.Fatalf("Failed to run server: %v", err)
+		logger.Fatalf("Failed to run server: %v", err)
 	}
 }

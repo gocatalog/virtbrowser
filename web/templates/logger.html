@@ -1,0 +1,22 @@
+<div class="">
+    <h4>Welcome, {{ .User }} Log Viewer</h4>
+    <div id="log"></div>
+</div>
+
+<script>
+const logElement = document.getElementById('log');
+const ws = new WebSocket(`ws://${window.location.host}/ws/logs?file=${encodeURIComponent(new URLSearchParams(window.location.search).get('file'))}`);
+
+ws.onmessage = function(event) {
+logElement.textContent += event.data;
+logElement.scrollTop = logElement.scrollHeight;
+};
+
+ws.onerror = function(event) {
+logElement.textContent += 'WebSocket error: ' + event.data + '\\n';
+};
+
+ws.onclose = function(event) {
+logElement.textContent += 'WebSocket connection closed\\n';
+};
+</script>
