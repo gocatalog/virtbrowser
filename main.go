@@ -61,10 +61,16 @@ func main() {
 
 	// group routes for vms
 	routeGrpVms := router.Group("/vms")
-	routeGrpVms.GET("", handlers.ShowVMList)
+	routeGrpVms.GET("/machine", handlers.ShowVMList)
+	routeGrpVms.GET("/network", handlers.ShowVMList)
 	// routeGrpVms.POST("", CreateVM)
 	// routeGrpVms.PUT("/:id", UpdateVM)
 	// routeGrpVms.DELETE("/:id", DeleteVM)
+
+	// group routes for api
+	routerGrpAPI := router.Group("/api/v1")
+	routerGrpAPI.GET("/machine", handlers.VMList)
+	routerGrpAPI.GET("/network", handlers.VMList)
 
 	router.Use(handlers.RedirectToDashboardOrLogin)
 
