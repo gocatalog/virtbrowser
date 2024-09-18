@@ -108,6 +108,9 @@ func createSSHConfig() (*ssh.ClientConfig, error) {
 	}
 
 	config := &ssh.ClientConfig{
+
+		// User is taking from the user it ran ,
+		// it should be the user logged FIXME TODO
 		User: os.Getenv("USER"), // Assuming the environment variable USER is set to the SSH user
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(signer),
